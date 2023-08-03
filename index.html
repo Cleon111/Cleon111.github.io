@@ -1,0 +1,746 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Experimento</title>
+    
+</head>
+<body>
+
+    <form id="miFormulario" action="https://docs.google.com/forms/d/e/1FAIpQLSdTg6zvb1Q2cSjuOLqV_cf1Dc8sbMw_RpCnyj2rAnRB14t0wg/formResponse" method="post" style="text-align: center;">
+        <div id="Enunciado" style="display: none;">
+            <h1>
+                ¿Viene el sonido?
+            </h1>
+    
+        </div> 
+        
+        <div id="primera" >
+            <label for="nombre">Ingresá tu nombre:</label>
+            <input type="text" id="nombre" name="entry.1491339985" required>
+        </div>
+        <br>
+        <div id="consigna" class="center">
+            <h1>Ahora vas a ver una serie de caras. Las imagenes van a pasar solas. Apretá el botón de 'Comenzar' y observalas con atención</h1>
+            <button id="comenzarBtn" type="button">Comenzar</button>
+        </div>
+        <br>
+        <div id="final" style="display: none; text-align: center;">
+           <h1> ¡Tarea terminada! <br>
+            Presiona "ENVIAR" para que tus respuestas queden registradas</h1>
+            <br><br><br><br>
+        </div>
+
+        <div id="sepa" class="center" style="display: none; text-align: center;">
+            <h1> Siguiente ronda <br></h1>
+             <br><br><br><br>
+         </div>
+
+
+
+
+
+
+    </form>
+
+
+    <div id="divisor" style="display: none; text-align: center;">
+        <h1>  <br>
+         Presiona "Continuar" para realizar la siguiente ronda</h1>
+         <br><br><br><br>
+         <button type="button" id="cont" onclick=(mostrarSiguienteFoto2())>Continuar</button>
+     </div>
+
+    <div id="consigna2" class="center" style="display: none;">
+        <h1>Consigna 2</h1>
+        Alguna de las caras que viste, estan asociadas a un sonido. Ahora las vas a volver a ver, y usando tu memoria deberas predecir en cuales va a aparecer el sonido.
+        <center>
+            
+        <ul class="items">
+        Cuando aparezca cada cara, vas a tener dos segundos para predecir si va a aparecer el sonido o no.
+            <center>
+        <br>
+        <li>Si te parece que el sonido va a aparecer, presiona la barra espaciadora </li>
+
+  
+
+    </center>
+        </ul>
+    </center>
+        <button id="comenzarBtn2" onclick="segundaparte()">Comenzar</button>
+    </div>
+
+    <div id="fotosContainer" class="center">
+        <!-- Las fotos se agregarán dinámicamente aquí -->
+    </div>
+    <script>
+let startTime = null;
+let list = [];
+let ensayo = ["Ronda"];
+let acumulado=0;
+let parte=0;
+let cer=0;
+let intervalId = null;
+let fecha=null;
+let pit=false;
+let pre=false;
+let sin=false;
+let ron=0;
+
+
+var rondas= 1;
+
+const fotos = [
+    { src: "photo1.png", sonido: false },
+{ src: "photo2.png", sonido: false },
+{ src: "photo3.png", sonido: true },
+{ src: "photo4.png", sonido: true },
+{ src: "photo5.png", sonido: false },
+{ src: "photo6.png", sonido: true },
+{ src: "photo7.png", sonido: true },
+{ src: "photo8.png", sonido: false },
+{ src: "photo9.png", sonido: true },
+{ src: "photo10.png", sonido: false },
+{ src: "photo11.png", sonido: false },
+{ src: "photo12.png", sonido: true },
+{ src: "photo13.png", sonido: false },
+{ src: "photo14.png", sonido: true },
+{ src: "photo15.png", sonido: false },
+{ src: "photo16.png", sonido: true },
+{ src: "photo17.png", sonido: true },
+{ src: "photo18.png", sonido: false },
+{ src: "photo19.png", sonido: true },
+{ src: "photo20.png", sonido: false }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    ];
+
+var itemforms = ["...",
+"entry.529283058",
+"entry.1914483583",
+"entry.1241876554",
+"entry.681219736",
+"entry.201038001",
+"entry.2036750464",
+"entry.1667581883",
+"entry.786215781",
+"entry.287060845",
+"entry.661798434",
+"entry.807802175",
+"entry.1734766970",
+"entry.1625807570",
+"entry.1422093403",
+"entry.1900765226",
+"entry.602577969",
+"entry.690427467",
+"entry.244222076",
+"entry.1172179672",
+"entry.1120949097",
+"entry.1671270695",
+"entry.888965716",
+"entry.138863283",
+"entry.405884652",
+"entry.1371483711",
+"entry.708572747",
+"entry.1993992587",
+"entry.73946715",
+"entry.1961356594",
+"entry.2041295328",
+"entry.1423639894",
+"entry.1125111701",
+"entry.230801655",
+"entry.1100749333",
+"entry.526447514",
+"entry.1874292669",
+"entry.55734344",
+"entry.554603333",
+"entry.1841353981",
+"entry.829791652",
+"entry.529326120",
+"entry.1116539843",
+"entry.1202798256",
+"entry.718981507",
+"entry.1310525910",
+"entry.1375546376",
+"entry.1033454855",
+"entry.952135107",
+"entry.1417038165",
+"entry.1970552760",
+"entry.264774847",
+"entry.1302015873",
+"entry.2028066949",
+"entry.1146410176",
+"entry.1178997413",
+"entry.2077107517",
+"entry.1176464751",
+"entry.40882489",
+"entry.1100148071",
+"entry.341581007",
+"entry.1113133234",
+"entry.1310365995",
+"entry.553599850",
+"entry.1305891275",
+"entry.1208961258",
+"entry.686998265",
+"entry.1011407294",
+"entry.1891548769",
+"entry.1379453778",
+"entry.1492306357",
+"entry.2075421276",
+"entry.165230462",
+"entry.1707827325",
+"entry.906779124",
+"entry.337759577",
+"entry.458491033",
+"entry.343404139",
+"entry.310831271",
+"entry.512356088",
+"entry.1348233066",
+"entry.1610084125",
+"entry.386697004",
+"entry.863139910",
+"entry.1585899913",
+"entry.1120900032",
+"entry.1371703166",
+"entry.1424593891",
+"entry.564521905",
+"entry.1413872289",
+"entry.1061119509",
+"entry.1513831055",
+"entry.1483344799",
+"entry.839240238",
+"entry.1414366396",
+"entry.1670361568",
+"entry.410605924",
+"entry.1819578936",
+"entry.1157458589",
+"entry.381914702",
+"entry.2034133030",
+"entry.679886099",
+"entry.1041240882",
+"entry.492390165",
+"entry.927644870",
+"entry.793469781",
+"entry.95725381",
+"entry.1810219572",
+"entry.878342906",
+"entry.1768936464",
+"entry.94855614",
+"entry.1512016485",
+"entry.1754345898",
+"entry.1924288149",
+"entry.1679904490",
+"entry.1664861022",
+"entry.1783865811",
+"entry.743810506",
+"entry.1344570545",
+"entry.584733047",
+"entry.645575045"
+];
+
+https://docs.google.com/forms/d/e/1FAIpQLSdTg6zvb1Q2cSjuOLqV_cf1Dc8sbMw_RpCnyj2rAnRB14t0wg/viewform?usp=pp_url&entry.1491339985=facundo&entry.529283058=VISTA&entry.1914483583=VISTA&entry.1241876554=VISTA&entry.681219736=VISTA&entry.201038001=VISTA&entry.2036750464=VISTA&entry.1667581883=VISTA&entry.786215781=NO+VISTA&entry.287060845=VISTA&entry.661798434=VISTA&entry.807802175=VISTA&entry.1734766970=VISTA&entry.1625807570=VISTA&entry.1422093403=VISTA&entry.1900765226=VISTA&entry.602577969=VISTA&entry.690427467=VISTA&entry.244222076=VISTA&entry.1172179672=VISTA&entry.1120949097=VISTA&entry.1671270695=VISTA&entry.888965716=VISTA&entry.138863283=VISTA&entry.405884652=VISTA&entry.1371483711=VISTA&entry.708572747=VISTA&entry.1993992587=VISTA&entry.73946715=VISTA&entry.1961356594=VISTA&entry.2041295328=VISTA&entry.1423639894=VISTA&entry.1125111701=VISTA&entry.230801655=VISTA&entry.1100749333=VISTA&entry.526447514=VISTA&entry.1874292669=VISTA&entry.55734344=VISTA&entry.554603333=VISTA&entry.1841353981=VISTA&entry.829791652=VISTA&entry.529326120=VISTA&entry.1116539843=VISTA&entry.1202798256=VISTA&entry.718981507=VISTA&entry.1310525910=VISTA&entry.1375546376=VISTA&entry.1033454855=VISTA&entry.952135107=VISTA&entry.1417038165=VISTA&entry.1970552760=VISTA&entry.264774847=VISTA&entry.1302015873=VISTA&entry.2028066949=VISTA&entry.1146410176=VISTA&entry.1178997413=VISTA&entry.2077107517=VISTA&entry.1176464751=VISTA&entry.40882489=VISTA&entry.1100148071=VISTA&entry.341581007=VISTA&entry.1113133234=VISTA&entry.1310365995=VISTA&entry.553599850=VISTA&entry.1305891275=VISTA&entry.1208961258=VISTA&entry.686998265=VISTA&entry.1011407294=VISTA&entry.1891548769=VISTA&entry.1379453778=VISTA&entry.1492306357=VISTA&entry.2075421276=VISTA&entry.165230462=VISTA&entry.1707827325=VISTA&entry.906779124=VISTA&entry.337759577=VISTA&entry.458491033=VISTA&entry.343404139=VISTA&entry.310831271=VISTA&entry.512356088=VISTA&entry.1348233066=VISTA&entry.1610084125=VISTA&entry.386697004=VISTA&entry.863139910=VISTA&entry.1585899913=VISTA&entry.1120900032=VISTA&entry.1371703166=VISTA&entry.1424593891=VISTA&entry.564521905=VISTA&entry.1413872289=VISTA&entry.1061119509=VISTA&entry.1513831055=VISTA&entry.1483344799=VISTA&entry.839240238=VISTA&entry.1414366396=VISTA&entry.1670361568=VISTA&entry.410605924=VISTA&entry.1819578936=VISTA&entry.1157458589=VISTA&entry.381914702=VISTA&entry.2034133030=VISTA&entry.679886099=VISTA&entry.1041240882=VISTA&entry.492390165=VISTA&entry.927644870=VISTA&entry.793469781=VISTA&entry.95725381=VISTA&entry.1810219572=VISTA&entry.878342906=VISTA&entry.1768936464=VISTA&entry.94855614=VISTA&entry.1512016485=VISTA&entry.1754345898=VISTA&entry.1924288149=VISTA&entry.1679904490=VISTA&entry.1664861022=VISTA&entry.1783865811=VISTA&entry.743810506=VISTA&entry.1344570545=VISTA&entry.584733047=VISTA&entry.645575045=VISTA
+
+
+
+
+document.getElementById("comenzarBtn").addEventListener("click", function() {
+
+    var ide =document.querySelector('input[name="entry.1491339985"]').value;
+
+
+    if (ide=="" ) {
+    alert("Por favor ingresa tu nombre antes de comenzar");
+
+    return;
+}
+var elemento = document.documentElement;
+
+if (elemento.requestFullscreen) {
+                // Coloca la página completa en modo de pantalla completa
+                elemento.requestFullscreen();
+            } else if (elemento.mozRequestFullScreen) { // Firefox
+                elemento.mozRequestFullScreen();
+            } else if (elemento.webkitRequestFullscreen) { // Chrome, Safari y Opera
+                elemento.webkitRequestFullscreen();
+            } else if (elemento.msRequestFullscreen) { // Internet Explorer / Edge
+                elemento.msRequestFullscreen();
+            }
+    
+    document.getElementById("consigna").style.display = "none";
+    document.getElementById("fotosContainer").style.display = "block";
+    document.getElementById("primera").style.display = "none";
+
+    setTimeout(mostrarFotos, 5000);
+    
+});
+
+function mostrarFotos() {
+    startTime = new Date().getTime();
+    fecha = new Date(startTime);
+    list.push(fecha);
+  intervalId = setInterval(agregarNumero, 100);
+
+    let index = 0;
+    
+    const mostrarSiguienteFoto = function() {
+        pit = false;
+        if (index === fotos.length) {
+            document.getElementById("consigna2").style.display = "block"; 
+            
+           
+            
+  
+            return;
+        }
+        
+        const foto = fotos[index];
+        const fotoElement = document.createElement("img");
+        fotoElement.src = foto.src;
+        fotoElement.style.maxWidth = "60%";
+        fotoElement.style.maxHeight = "90%";
+       
+        fotoElement.style.objectFit = "contain";
+         // Hace que la foto se ajuste dentro del contenedor sin alterar sus proporciones
+        document.getElementById("fotosContainer").innerHTML = "";
+        document.getElementById("fotosContainer").appendChild(fotoElement);
+        if (foto.sonido) {
+            sin=false;
+            pre=true;
+            
+            setTimeout(function() {
+                pre=false;
+                pit=true;
+                pitido();
+                // Reproducir sonido aquí (sonido de 800hz durante 1.5 segundos)
+            }, 2000);
+        }
+
+
+        if(foto.sonido==false){
+            sin=true;
+        }
+
+
+
+
+
+        index++;
+        setTimeout(function() {
+            pit=false;
+            sin=false;
+            document.getElementById("fotosContainer").innerHTML = ""; // Limpiar la pantalla antes de mostrar la pantalla negra
+            setTimeout(mostrarSiguienteFoto, Math.random() * 300 +500); // Intervalo aleatorio entre 500 y 800ms
+        }, 4000); // Mostrar cada foto durante 3 segundos
+    };
+
+    mostrarSiguienteFoto();
+
+    
+}
+
+
+
+var separador= false;
+
+let index2 = 0;
+
+const ordenfotos = [8, 3, 17, 11, 2, 18, 1, 4, 7, 13, 6, 10, 15, 0, 12, 5, 14, 9, 16, 19/*2*/, 5, 14, 2, 13, 10, 8, 4, 17, 16, 7, 11, 18, 15, 0, 3, 6, 1, 19, 12, 9/*3*/, 7, 15, 11, 4, 18, 3, 2, 10, 5, 0, 12, 14, 17, 8, 1, 13, 6, 9, 16, 19/*4*/, 11, 2, 17, 12, 15, 8, 5, 0, 13, 4, 7, 10, 3, 18, 1, 19, 6, 9, 16, 14/*5*/, 1, 4, 15, 12, 8, 3, 13, 0, 7, 10, 17, 6, 2, 9, 11, 5, 14, 18, 16, 19 /*6*/, 11, 2, 17, 12, 15, 8, 5, 0, 13, 4, 7, 10, 3, 18, 1, 19, 6, 9, 16, 14 /*7*/, 1, 4, 15, 12, 8, 3, 13, 0, 7, 10, 17, 6, 2, 9, 11, 5, 14, 18, 16, 19];
+    
+
+function segundaparte(){ 
+    cer=1; 
+
+    document.getElementById("consigna2").style.display = "none"; 
+    document.getElementById("fotosContainer").style.display = "block";
+    ron++;
+    setTimeout(mostrarSiguienteFoto2, 2000);
+    
+}
+
+
+
+
+const mostrarSiguienteFoto2 = function() {
+    document.getElementById("sepa").style.display="none";
+    document.getElementById("fotosContainer").innerHTML = "";  
+    cer=1;
+
+    document.getElementById("divisor").style.display = "none";
+    
+        
+    
+        
+
+        
+
+
+ 
+    document.getElementById("Enunciado").style.display = "none";
+
+    var seccion=(index2+1)/20;
+   
+
+
+
+    if (index2 === 60) {
+
+
+
+document.getElementById("final").style.display = "block";
+var formulario = document.getElementById("miFormulario");
+        // Crear un botón de submit
+var submitBtn = document.createElement("input");
+
+// Establecer atributos del botón de submit
+submitBtn.setAttribute("type", "submit");
+submitBtn.setAttribute("value", "Enviar");
+submitBtn.style.alignSelf="center";
+detenerLlenado();
+submitBtn.style.margin = '0 auto';
+// Agregar el botón de submit al formulario
+formulario.appendChild(submitBtn);
+
+
+
+
+
+
+        return;
+    }
+    const foto = fotos[ordenfotos[index2]];
+    
+    const fotoElement = document.createElement("img");
+    fotoElement.src = foto.src;
+    fotoElement.style.maxWidth = "60%";
+    fotoElement.style.maxHeight = "90%";
+   
+    fotoElement.style.objectFit = "contain";
+     // Hace que la foto se ajuste dentro del contenedor sin alterar sus proporciones
+   
+    document.getElementById("fotosContainer").appendChild(fotoElement);
+    if (foto.sonido) {
+        sin=false;
+        pre=true;
+        setTimeout(function() {
+            pre=false;
+            pit=true;
+            pitido();
+            // Reproducir sonido aquí (sonido de 800hz durante 1.5 segundos)
+        }, 2000);
+    }
+    if (foto.sonido==false){
+        sin=true;
+    }
+    
+    
+  
+        
+document.getElementById("Enunciado").style.display = "block";
+
+// Create the question element
+var pregunta = document.createElement('div');
+pregunta.id = itemforms[index2];
+pregunta.name = itemforms[index2];
+pregunta.style.display = 'block';
+pregunta.style.textAlign = 'center'; // Add this line to center the buttons
+
+// Create the first option button
+var reco1 = document.createElement('button');
+reco1.type = 'button';
+reco1.id = itemforms[index2];
+reco1.name = itemforms[index2];
+reco1.value = 'SI';
+reco1.textContent = 'SI';
+reco1.addEventListener('click', function(event) {
+  miFuncion(event.target.value, pregunta, index2);
+});
+pregunta.appendChild(reco1);
+
+
+
+// Insert the question in the form
+var formulario = document.getElementById('miFormulario');
+formulario.appendChild(pregunta);
+
+setTimeout(function(){
+    reco1.disabled = true;
+    reco2.disabled = true;
+    reco1.style.display="none";
+reco2.style.display="none";
+
+},2000);
+
+var respuestaSeleccionada = false; // Variable para controlar si se ha seleccionado una respuesta
+
+document.addEventListener('keydown', function(event) {
+  if (!respuestaSeleccionada && event.key === " ") {
+    reco1.click();
+    respuestaSeleccionada = true; // Establecer la variable en verdadera para indicar que se ha seleccionado una respuesta
+    reco1.disabled = true;
+    reco2.disabled = true;
+    reco1.style.display="none";
+reco2.style.display="none";
+
+}
+
+
+});
+
+function miFuncion(selectedValue, pregunta, index) {
+  // Verificar si ya hay una respuesta seleccionada
+  var existingAnswer = pregunta.querySelector('input[name="' + itemforms[index] + '"]');
+  if (existingAnswer) {
+    // Si ya existe una respuesta, simplemente actualizar su valor
+    existingAnswer.value = selectedValue;
+  } else {
+    // Si no existe, crear el elemento input y establecer su valor
+    var answerInput = document.createElement('input');
+    answerInput.type = 'hidden';
+    answerInput.name = itemforms[index];
+    answerInput.value = selectedValue;
+    pregunta.appendChild(answerInput);
+  }
+
+  respuestaSeleccionada = true; // Marcar que se ha seleccionado una respuesta
+
+  borrar();
+}
+ 
+//if (seccion%1==0 && seccion!=0 && seccion!=3){
+    if (seccion%1==0 && seccion!=0 && seccion!=3){
+    
+        rondas++;
+        
+        
+        setTimeout(function() {borrar ();},2000);
+        setTimeout(function() {
+            pre=false;
+            pit=false;
+            sin=false; 
+            document.getElementById("fotosContainer").innerHTML = "";
+            var se=document.getElementById("sepa");
+            se.innerText="Preparate para la ronda "+(seccion+1)+"/3";
+            se.style.display="block";
+            setTimeout(mostrarSiguienteFoto2, 2000); // Intervalo aleatorio entre 500 y 800ms
+            setTimeout(ron++, 2000); // Intervalo aleatorio entre 500 y 800ms
+        }, 4000); // Mostrar cada foto durante 3 segundos 
+            
+
+
+    }
+
+    else{
+        
+        setTimeout(function() {borrar ();},2000);
+        setTimeout(function() {
+            pre=false;
+            pit=false;
+            sin=false; 
+            document.getElementById("fotosContainer").innerHTML = "";
+            
+            setTimeout(mostrarSiguienteFoto2, Math.random() * 300 + 500); // Intervalo aleatorio entre 500 y 800ms
+        }, 4000); // Mostrar cada foto durante 3 segundos 
+
+    }
+
+    index2++;
+   
+        
+     // Mostrar cada foto durante 3 segundos
+};
+
+
+
+
+
+function borrar() {
+document.getElementById("Enunciado").style.display = "none" ; // Intervalo aleatorio entre 500 y 800ms
+document.getElementById(itemforms[index2-1]).style.display = "none" ; // Intervalo aleatorio entre 500 y 800ms
+reco1.disabled = true;
+reco2.disabled = true;
+reco1.style.display="none";
+reco2.style.display="none";
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function pitido(){
+
+        // Crea un nuevo contexto de audio
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Frecuencia del pitido en Hz
+        const frequency = 100;
+
+        // Duración del pitido en segundos
+        const duration = 2;
+
+        // Crea un nodo de oscilador
+        const oscillator = audioContext.createOscillator();
+        oscillator.type = 'sine'; // Tipo de forma de onda del oscilador
+        oscillator.frequency.value = frequency; // Establece la frecuencia del oscilador
+
+        // Conecta el oscilador al destino de salida de audio (los altavoces)
+        oscillator.connect(audioContext.destination);
+
+
+        function handleOscillatorEnd() {
+    pit = false;
+    oscillator.removeEventListener('ended', handleOscillatorEnd);
+  }
+
+  // Añade el evento 'ended' al oscilador
+  oscillator.addEventListener('ended', handleOscillatorEnd);
+
+        // Inicia el oscilador
+        oscillator.start();
+
+        // Detén el oscilador después de la duración especificada
+        oscillator.stop(audioContext.currentTime + duration);
+        
+        }
+
+
+        //
+
+
+
+
+
+        function descargarLista() {
+  const maxRows = Math.max(list.length, ensayo.length);
+  let contenido = '';
+  
+  for (let i = 0; i < maxRows; i++) {
+    const listItem = list[i] !== undefined ? list[i] : '0';
+    const ensayoItem = ensayo[i] !== undefined ? ensayo[i] : '0';
+    contenido += listItem + '\t' + ensayoItem + '\n';
+  }
+  
+  const blob = new Blob([contenido], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = document.getElementById("nombre").value +'.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+
+
+function agregarNumero() {
+
+    if (acumulado>=590 && cer==1 ){
+parte++;
+acumulado=0; 
+cer=0;
+
+}
+  if(pre==true) {
+    list.push(1);
+    acumulado++;
+    cer=0;
+  }
+  
+    
+ else if (pit==true) {
+    list.push(2);
+    acumulado++;
+    cer=0;
+  } 
+
+  else if(sin==true) {
+    list.push(3);
+    acumulado++;
+    cer=0;
+  }
+  
+  
+  else {
+    list.push(0);
+    
+  }
+
+
+ensayo.push(ron);
+
+}
+
+function detenerLlenado() {
+  clearInterval(intervalId);
+  console.log(list);
+  console.log(fecha);
+  descargarLista();
+}
+
+            </script>
+
+
+
+<style>
+body {
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.center {
+    text-align: center;
+}
+.items {
+    text-align: center;
+  list-style-position: inside;
+}
+#fotosContainer {
+    display: none;
+    max-width: 100%;
+    max-height: 100%;
+    
+}
+
+button {
+    
+  margin: 10px;
+}
+
+
+
+
+</style>
+</body>
+</html>
+
+
